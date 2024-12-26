@@ -1,5 +1,35 @@
-This was a project that is modeled after the 'Exceptional Jo' program at Vanderbilt Health.  Originally it was a Hackathon 2024 project.
+---
+title: "README"
+format: html
+editor: visual
 
-The goal is to automatically sort through patient provided survey comments and filter out those that are positive, have a named provider, and are rated exceptional.  
+---
 
-These comments are then sent to the provider directly.
+<!-- README.md is generated from README.qmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Provider Recognition Program
+
+### Moffitt Cancer Center - Patient Experience Department
+
+## Overview
+
+This is an automated sort, filter and distribution process that takes positive provider specific comments, sorts them in order of priority and then distributes to the provider in a visually appealing graphic. The steps are as follows:
+
+-   import third party survey comments 
+-   perform sentiment analysis to filter positive comments
+-   extract positive comments with named provider
+-   verify provider/resource match to comment names
+-   use sentiment score to sort matched comments by provider
+-   combine into a visual that can be sent to provider
+
+
+
+------------------------------------------------------------------------
+
