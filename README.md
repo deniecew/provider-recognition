@@ -1,18 +1,3 @@
----
-title: "README"
-format: html
-editor: visual
-
----
-
-<!-- README.md is generated from README.qmd. Please edit that file -->
-
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
 
 # Provider Recognition Program
 
