@@ -2,7 +2,7 @@
 title: "README"
 format: html
 editor: visual
-output: github_document
+
 ---
 
 <!-- README.md is generated from README.qmd. Please edit that file -->
