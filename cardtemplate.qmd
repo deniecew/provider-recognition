@@ -10,8 +10,6 @@ params:
   npi : "1003201096"
 ---
 
-
-
 ## Provider Recognition
 
 ```{r}
@@ -35,7 +33,6 @@ name_filter<-commentdata%>%
 
 
 ```
-
 
 #### `r name_filter` (NPI: `r params$npi`)
 
@@ -65,6 +62,9 @@ filter_npi$check2 <- grepl(first_nm, y)
 named_comments <- filter_npi %>%
   filter(check1 == 'TRUE' | check2 == 'TRUE') 
 
+n<- nrow(named_comments)
+
+
 #Rank Comments
 bigrams_separated <- named_comments %>% 
   unnest_tokens(bigram, response, token = "ngrams", n = 2) %>% 
@@ -89,6 +89,16 @@ bigram_sentiment <- bigrams_separated %>%
   ungroup() %>%
   select(response)
 
+comments_all <- filter_npi %>%
+  select(response)%>%
+  rename('All Positive Comments' = response) %>%
+  gt() %>%
+  cols_align(align="left",columns = everything())%>%
+  tab_options(column_labels.background.color = 'dodgerblue4')%>%
+  tab_style(style=cell_text(align="center"),
+            locations = cells_column_labels(columns = everything())
+            )
+
   # rename('Provider Specific Positive Comments' = response) %>%
   # gt() %>%
   # cols_align(align="left",columns = everything())%>%
@@ -103,21 +113,17 @@ bigram_sentiment <- bigrams_separated %>%
 
 ```
 
-::: {.shoutout-box}
+::: shoutout-box
 # 🎉 Shout-Out! 🎉
 
-**Recipient:** `r name_filter`  
+<!-- **Recipient:** `r name_filter` -->
 
+## **`r name_filter`**
 
-**Message:** `r bigram_sentiment`  
-
+<!-- **Patient Comment:**  -->
+`r if (n == 0) "No data available" else if (n==1) bigram_sentiment[1,] else bigram_sentiment[1:2,]`
 
 
 
 <!-- Thank you for your exceptional contribution! -->
 :::
-
-
-
-
-

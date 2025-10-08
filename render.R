@@ -1,7 +1,7 @@
 library(quarto)
 library(tidyverse)
 
-# load("C:/Users/4477078/OneDrive - Moffitt Cancer Center/provider_recognition/commentdata.Rdata")
+load("C:/Users/4477078/OneDrive - Moffitt Cancer Center/provider_recognition/commentdata.Rdata")
 
 npi_nums<-commentdata %>%
   distinct(npi_num) %>%
@@ -16,11 +16,10 @@ names<-commentdata %>%
 
 reports<-
   tibble(
-    input="recognition.qmd",
+    input="cardtemplate.qmd",
     output_file = str_glue("{names}.html"),
     execute_params=map(npi_nums,~list(npi=.))
   )
-
 
 
 pwalk(reports,quarto_render)
