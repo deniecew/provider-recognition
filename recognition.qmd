@@ -4,7 +4,7 @@ format: html
 editor: visual
 
 params:
-  npi : "1558561217"
+  npi : "1003201096"
 ---
 
 ## Provider Recognition
@@ -20,18 +20,8 @@ library(janitor)
 library(dplyr)
 library(gt)
 
-# #import & clean data
-# 
-# ptexp_sampledata <- read.csv("C:/Users/4477078/OneDrive - Moffitt Cancer Center/Hackathon/ptexp_sampledata.csv")
-# 
-# commentdata<-ptexp_sampledata[-c(2535,2536), ]%>% #remove extra lines of info
-#   clean_names()
-# 
-# commentdata$npi_num<-as.character(commentdata$npi_num)
-# 
-# save(commentdata,file="G:/Press Ganey II/Reports/Ad Hoc/DEEP DIVE/Key Driver Reports/data/commentdata.Rdata")
 
-load("G:/Press Ganey II/Reports/Ad Hoc/DEEP DIVE/Key Driver Reports/data/commentdata.Rdata")
+load("C:/Users/4477078/OneDrive - Moffitt Cancer Center/provider_recognition/commentdata.Rdata")
 
 name_filter<-commentdata%>%
   filter(npi_num == params$npi)%>%
@@ -82,9 +72,10 @@ bigram_sentiment <- bigrams_separated %>%
   rename(value2 = value) %>% 
   mutate(value2 = if_else(negated, -value2, value2)) %>% 
   mutate(sentiment = rowSums(select(., value1, value2), na.rm = TRUE)) %>% 
-  group_by(survey_id, question_text_latest) %>% 
+  group_by(survey_id, question_text_latest) %>%
   summarize(total_sentiment = sum(sentiment, na.rm = TRUE)) %>% 
-  inner_join(named_comments %>% select(resource_name, npi_num, survey_id, question_text_latest, response), by = c("survey_id", "question_text_latest")) %>% 
+  inner_join(named_comments %>% select(resource_name, npi_num, survey_id, question_text_latest, response), by =
+  c("survey_id", "question_text_latest")) %>%
   arrange(resource_name, desc(total_sentiment)) %>%
   ungroup() %>%
   select(response) %>%
