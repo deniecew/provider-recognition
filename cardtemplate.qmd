@@ -7,7 +7,7 @@ format:
     page-layout: full
     
 params:
-  npi : "1003201096"
+  npi : "1003904889"
 ---
 
 ## Provider Recognition
@@ -121,8 +121,15 @@ comments_all <- filter_npi %>%
 ## **`r name_filter`**
 
 <!-- **Patient Comment:**  -->
-`r if (n == 0) "No data available" else if (n==1) bigram_sentiment[1,] else bigram_sentiment[1:2,]`
 
+
+`r if (n == 0) {
+    "No data available"
+  } else if (n == 1) {
+    paste(bigram_sentiment[1,], collapse = "\n")
+  } else {
+    paste(bigram_sentiment[1,], "", bigram_sentiment[2,], sep = "\n")
+  }`
 
 
 <!-- Thank you for your exceptional contribution! -->
