@@ -1,15 +1,15 @@
 library(quarto)
 library(tidyverse)
 
-load("C:/Users/4477078/OneDrive - Moffitt Cancer Center/provider_recognition/commentdata.Rdata")
+load("C:/Users/4477078/OneDrive - Moffitt Cancer Center/provider_recognition/providermatches.Rdata")
 
-npi_nums<-commentdata %>%
+npi_nums<-providermatches %>%
   distinct(npi_num) %>%
   pull(npi_num) %>%
   as.character()
   
 
-names<-commentdata %>%
+names<-providermatches %>%
   distinct(provider_nm) %>%
   pull(provider_nm) %>%
   as.character()

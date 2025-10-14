@@ -4,7 +4,7 @@ format: html
 editor: visual
 
 params:
-  npi : "1982808689"
+  npi : "1992585723"
 ---
 
 ## Provider Recognition
