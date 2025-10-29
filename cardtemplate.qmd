@@ -7,7 +7,7 @@ format:
     page-layout: full
 
 params:
-  npi : "1508295700"
+  npi : "1740381763"
 ---
 
 ```{=html}
@@ -18,10 +18,11 @@ params:
   font-size: 1.75em;
   font-weight: bold;
   margin-top: 0;
+  color: #062F6E;
 }
 
 .background-container {
-  background-image: url('shoutoutimage03.png'); 
+  background-image: url('shoutoutimage07.png'); 
   overflow: hidden; 
   background-size: cover;
   background-position: center;
@@ -32,13 +33,14 @@ params:
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: white; 
+  color: white;
   text-align: center;
 }
 
 .centered-text {
   font-size: 1.5em;
   font-weight: bold;
+  font: Draft A;
   background-color: transparent;
   padding: 0;
   margin-left: 250px;  
@@ -201,18 +203,16 @@ comments_all <- filter_npi %>%
 ```
 
 ::: centered-title
-`r paste("🎉 SHOUT OUT —", name_filter, "🎉")`
+<!-- `r paste("🎉 SHOUT OUT —", name_filter, "🎉")` -->
+
+`r paste("SHOUT OUT —", name_filter)`
 :::
 
 :::: background-container
 ::: centered-text
-<!-- `r paste("🎉 SHOUT OUT 🎉" )` -->
-
 <!-- `r if (n == 0) {   "No data available" } else if (n == 1) {   paste0('"', bigram_sentiment[1, ], '"', collapse = "\n") } else {   paste0('"', bigram_sentiment[1, ], '"', "\n\n", '"', bigram_sentiment[2, ], '"') }` -->
 
 `r if (n == 0) {   "No data available" } else{ paste0('"', bigram_sentiment[1, ], '"', collapse = "\n") }`
-
-
 :::
 ::::
 
