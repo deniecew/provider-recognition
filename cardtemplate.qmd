@@ -7,7 +7,8 @@ format:
     page-layout: full
 
 params:
-  npi : "1740381763"
+  npi : "1326492430"
+
 ---
 
 ```{=html}
@@ -38,7 +39,7 @@ params:
 }
 
 .centered-text {
-  font-size: 1.5em;
+  font-size: 1.4em;
   font-weight: bold;
   font: Draft A;
   background-color: transparent;
@@ -60,6 +61,7 @@ params:
 </style>
 ```
 
+
 ```{r}
 #| echo: false
 #| warning: false 
@@ -73,55 +75,8 @@ library(dplyr)
 library(gt)
 library(tinytex)
 
-###Cleaning the Data and Preparing Matches
-
-commentdata <- read.csv("C:/Users/4477078/OneDrive - Moffitt Cancer Center/provider_recognition/commentdata.csv")
-
-commentdata <- commentdata %>% 
-  clean_names() %>%
-  filter(provider_nm != "Provider New/Ungroupable")
-
-commentdata$npi_num<-as.character(commentdata$npi_num)
-  
-save(commentdata,file="C:/Users/4477078/OneDrive - Moffitt Cancer Center/provider_recognition/commentdata.Rdata")
-
-#filter providers with comments
-providermatches <- data.frame(provider_nm = character(), npi_num = character(), match_count = integer(), 
-                         stringsAsFactors = FALSE)
-
-for (npi_val in unique(commentdata$npi_num)){
-  
-  # Proper filtering using dplyr
-  subsetcomments <- commentdata %>% filter(npi_num == npi_val)
-  
-  # Split resource_name into last and first names
-  subsetcomments[c('last_nm', 'first_nm')] <- str_split_fixed(subsetcomments$resource_name, ' ', 2)
-  
-  # Title-case the names
-  last_nm <- str_to_title(subsetcomments$last_nm)
-  first_nm <- str_to_title(subsetcomments$first_nm)
-  
-  # Clean response text
-  x <- subsetcomments$response
-  y <- str_replace_all(x, " ", "")
-  
-  # Check for name matches
-  subsetcomments$check1 <- grepl(last_nm, y)
-  subsetcomments$check2 <- grepl(first_nm, y)
-  
-  # Filter rows where either name is found
-  named_comments <- subsetcomments %>% filter(check1 | check2)
-  
-  match_count<-nrow(named_comments)
-  provider<-unique(subsetcomments$provider_nm)
-
-  providermatches <- rbind(providermatches, data.frame(provider_nm = provider, npi_num = npi_val, match_count = match_count))
-}
-
-providermatches <- providermatches %>%
-  filter(match_count > 0)
-
-save(providermatches,file="C:/Users/4477078/OneDrive - Moffitt Cancer Center/provider_recognition/providermatches.Rdata")
+load("providermatches.Rdata")
+load("commentdata.Rdata")
 
 name_filter <- commentdata %>%
   filter(npi_num == params$npi) %>%
@@ -188,34 +143,30 @@ comments_all <- filter_npi %>%
             locations = cells_column_labels(columns = everything())
             )
 
-  # rename('Provider Specific Positive Comments' = response) %>%
-  # gt() %>%
-  # cols_align(align="left",columns = everything())%>%
-  # tab_options(column_labels.background.color = 'dodgerblue4')%>%
-  # tab_style(style=cell_text(align="center"),
-  #           locations = cells_column_labels(columns = everything())
-  #           )
-
-
-
- #named comments sorted
 
 ```
 
-::: centered-title
-<!-- `r paste("🎉 SHOUT OUT —", name_filter, "🎉")` -->
 
+::: centered-title
 `r paste("SHOUT OUT —", name_filter)`
 :::
 
 :::: background-container
 ::: centered-text
-<!-- `r if (n == 0) {   "No data available" } else if (n == 1) {   paste0('"', bigram_sentiment[1, ], '"', collapse = "\n") } else {   paste0('"', bigram_sentiment[1, ], '"', "\n\n", '"', bigram_sentiment[2, ], '"') }` -->
-
-`r if (n == 0) {   "No data available" } else{ paste0('"', bigram_sentiment[1, ], '"', collapse = "\n") }`
+`r if (n == 0) {
+      "No data available"
+    } else {
+      paste0('"', bigram_sentiment[1, ], '"', collapse = "\n")
+    }`
 :::
 ::::
 
 ::: footer
-`r paste("Comment received ", as.Date(unique(subsetcomments$recdate)))`
+`r if (n == 0) {
+      "No comment date available"
+    } else {
+      paste0("Comment received ", named_comments$recdate)
+    }`
 :::
+
+
