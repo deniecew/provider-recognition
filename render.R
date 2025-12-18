@@ -15,7 +15,7 @@ commentdata <- read.csv("commentdata.csv")
 commentdata <- commentdata %>% 
   clean_names() %>%
   filter(provider_nm != "Provider New/Ungroupable") %>%
-  mutate(recdate = as.Date(recdate, format = "%m/%d/%Y"))
+  mutate(recdate = as.Date(recdate))
 
 
 commentdata$npi_num<-as.character(commentdata$npi_num)
@@ -54,7 +54,7 @@ for (npi_val in unique(commentdata$npi_num)){
   program<-unique(subsetcomments$program_nm)
   date_count<-length(unique(named_comments$recdate))
   
-  providermatches <- rbind(providermatches, data.frame(program_n = program, provider_nm = provider, npi_num = npi_val, match_count = match_count, emails_sent = date_count))
+  providermatches <- rbind(providermatches, data.frame(program = program, provider_nm = provider, npi_num = npi_val, match_count = match_count, emails_sent = date_count))
 }
 
 save(commentdata,file="commentdata.Rdata")

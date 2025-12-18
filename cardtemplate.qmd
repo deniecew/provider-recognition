@@ -7,7 +7,7 @@ format:
     page-layout: full
 
 params:
-  npi : "1326492430"
+  npi : " "
 
 ---
 
@@ -23,7 +23,7 @@ params:
 }
 
 .background-container {
-  background-image: url('shoutoutimage07.png'); 
+  background-image: url('shoutoutimage10.png'); 
   overflow: hidden; 
   background-size: cover;
   background-position: center;
@@ -39,7 +39,7 @@ params:
 }
 
 .centered-text {
-  font-size: 1.4em;
+  font-size: 1.2em;
   font-weight: bold;
   font: Draft A;
   background-color: transparent;
@@ -165,7 +165,7 @@ comments_all <- filter_npi %>%
 `r if (n == 0) {
       "No comment date available"
     } else {
-      paste0("Comment received ", named_comments$recdate)
+      paste0("Comment received ", unique(named_comments$recdate))
     }`
 :::
 
