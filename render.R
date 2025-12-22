@@ -3,7 +3,10 @@
 library(quarto)        # Provides functions for rendering Quarto documents 
 library(tidyverse)     # A collection of packages for data manipulation and visualization (e.g.,dplyr, purrr, stringr, readr, tidyr, etc.)
 library(janitor)       # Useful for cleaning data, especially column names (e.g., clean_names())
-
+library(purrr)
+library(readr)
+library(dplyr)
+library(gt)
 
 # Check the current working directory
 getwd()
@@ -110,7 +113,17 @@ reports <-
     )
   )
 
-# Render all reports by walking each row of 'reports' into quarto_render()
+# 1) Render all reports by walking each row of 'reports' into quarto_render()
 # pwalk passes the columns as named arguments matching quarto_render's signature
 # This produces one HTML report per provider with the corresponding NPI parameter
 pwalk(reports, quarto_render)
+
+# 2) Collect all per-NPI summaries
+files <- list.files("summaries", pattern = "\\.csv$", full.names = TRUE)
+combined_df <- map_dfr(files, readr::read_csv)
+
+# 3) Print one combined GT table
+combined_table <- combined_df %>%
+  arrange(provider_nm)
+
+write_csv(combined_table, file = "summarytable.csv")

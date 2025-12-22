@@ -75,6 +75,7 @@ library(janitor)   # Data cleaning helpers like clean_names
 library(dplyr)     # Explicitly load dplyr for data manipulation verbs
 library(gt)        # Build presentation-quality tables
 library(tinytex)   # LaTeX utilities for rendering PDFs via Quarto if needed
+library(tibble)
 
 # Load pre-saved data objects from RData files into the environment
 load("providermatches.Rdata")
@@ -176,8 +177,34 @@ comments_all <- filter_npi %>%
     style = cell_text(align = "center"),
     locations = cells_column_labels(columns = everything())
   )
-``
 
+first_or_na <- function(x) {
+  x <- as.character(x)
+  if (length(x) == 0 || all(is.na(x))) NA_character_ else x[1]
+}
+
+summary_row <- tibble(
+  npi_num = as.character(params$npi),
+
+  provider_nm = {
+    if ("fullname" %in% names(name_filter)) first_or_na(name_filter$fullname) else NA_character_
+  },
+
+  # earliest date among matched comments
+  rec_date = {
+    if (!is.null(named_comments) && "recdate" %in% names(named_comments) && nrow(named_comments) > 0) {
+      suppressWarnings(min(named_comments$recdate, na.rm = TRUE))
+    } else as.Date(NA)
+  },
+
+  shout_out = {
+    if (!is.null(bigram_sentiment) && "response" %in% names(bigram_sentiment) && nrow(bigram_sentiment) > 0) {
+      as.character(bigram_sentiment$response[1])
+    } else NA_character_
+  }
+)
+
+write_csv(summary_row, file = file.path("summaries", paste0(params$npi, ".csv")))
 
 ```
 
@@ -203,5 +230,6 @@ comments_all <- filter_npi %>%
       paste0("Comment received ", unique(named_comments$recdate))
     }`
 :::
+
 
 

@@ -29,3 +29,5 @@ This is an automated process that sorts, filters, and distributes positive provi
 -   combine into a visual that can be sent to the provider
 
 ------------------------------------------------------------------------
+
+![](images/clipboard-2647012276.png)
