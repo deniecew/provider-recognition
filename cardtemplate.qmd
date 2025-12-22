@@ -39,7 +39,7 @@ params:
 }
 
 .centered-text {
-  font-size: 1.2em;
+  font-size: 1.75em;
   font-weight: bold;
   font: Draft A;
   background-color: transparent;
@@ -67,81 +67,116 @@ params:
 #| warning: false 
 
 
-#load packages----
-library(tidytext)
-library(tidyverse)
-library(janitor)
-library(dplyr)
-library(gt)
-library(tinytex)
 
+# Load required packages ----
+library(tidytext)  # Tools for text mining with tidy data principles
+library(tidyverse) # Core tidy data packages (dplyr, tidyr, stringr, purrr, readr, ggplot2)
+library(janitor)   # Data cleaning helpers like clean_names
+library(dplyr)     # Explicitly load dplyr for data manipulation verbs
+library(gt)        # Build presentation-quality tables
+library(tinytex)   # LaTeX utilities for rendering PDFs via Quarto if needed
+
+# Load pre-saved data objects from RData files into the environment
 load("providermatches.Rdata")
 load("commentdata.Rdata")
 
+# Build a display name for the provider tied to the parameterized NPI:
+# 1) filter to the current NPI coming from Quarto params
+# 2) split Provider Name "Last, First" into two columns
+# 3) create "First Last" for reporting
+# 4) keep distinct values to avoid duplicates
 name_filter <- commentdata %>%
   filter(npi_num == params$npi) %>%
   separate(provider_nm, into = c("LastName", "FirstName"), sep = ", ") %>%
   mutate(fullname = paste(FirstName, LastName, sep = " ")) %>%
   distinct(fullname)
 
-#run for parameterized data
-filter_npi<-commentdata%>%
+# Restrict the dataset to the current NPI as defined by the Quarto parameter
+filter_npi <- commentdata %>%
   filter(npi_num == params$npi)
 
-#separate into first and last name
+# Split resource_name into last and first name using the first space as delimiter
+# Assign the two resulting pieces to new columns last_nm and first_nm
 filter_npi[c('last_nm', 'first_nm' )] <- str_split_fixed(filter_npi$resource_name, ' ', 2)
 
-last_nm <- str_to_title(filter_npi$last_nm)
+# Normalize names to title case for consistent matching
+last_nm  <- str_to_title(filter_npi$last_nm)
 first_nm <- str_to_title(filter_npi$first_nm)
 
-#look for first or last name in comment, print if it's there
+# Extract the free-text response vector used for name matching
 x <- filter_npi$response
 
-y <-str_replace_all(x, " ", "") #remove spaces in response text
+# Remove all spaces from each response to reduce false negatives in matching
+y <- str_replace_all(x, " ", "")
 
+# Logical flags indicating whether last or first name is found in the response text
 filter_npi$check1 <- grepl(last_nm,  y)
 filter_npi$check2 <- grepl(first_nm, y)
 
-
+# Keep only rows where either the first or last name is detected in the response
 named_comments <- filter_npi %>%
   filter(check1 == 'TRUE' | check2 == 'TRUE') 
 
-n<- nrow(named_comments)
+# Count of name-matched comments for the current NPI
+n <- nrow(named_comments)
 
-
-#Rank Comments
+# Rank comments via bigram sentiment:
+# 1) tokenize responses into bigrams
+# 2) remove NAs
+# 3) split bigrams into word1 and word2
 bigrams_separated <- named_comments %>% 
   unnest_tokens(bigram, response, token = "ngrams", n = 2) %>% 
   filter(!is.na(bigram)) %>% 
   separate(bigram, c("word1", "word2"), sep = " ")  
 
+# Define a set of negation words to invert sentiment of the following word
 negate_words <- c("not", "without", "no", "can't", "don't", "won't", "never")
 
+# Compute a simple bigram-based sentiment score:
+# 1) flag bigrams where the first word is a negation
+# 2) join AFINN sentiment scores for word1 and word2
+# 3) invert word2 sentiment if negated
+# 4) sum the two values to get bigram sentiment
+# 5) aggregate to survey-question level
+# 6) join back to the original named comments to retain context
+# 7) order by resource name and descending sentiment
+# 8) return only the response text
 bigram_sentiment <- bigrams_separated %>%
   mutate(negated = if_else(word1 %in% negate_words, TRUE, FALSE)) %>% 
   left_join(get_sentiments("afinn"), by = c("word1" = "word")) %>%
   rename(value1 = value) %>% 
-  left_join(get_sentiments("afinn"), by = c("word2" = "word")) %>% 
+  left_join(get_sentiments("afinn"), by = c("word2" = "word")) %>%
   rename(value2 = value) %>% 
   mutate(value2 = if_else(negated, -value2, value2)) %>% 
   mutate(sentiment = rowSums(select(., value1, value2), na.rm = TRUE)) %>% 
   group_by(survey_id, question_text_latest) %>%
   summarize(total_sentiment = sum(sentiment, na.rm = TRUE)) %>% 
-  inner_join(named_comments %>% select(resource_name, npi_num, survey_id, question_text_latest, response), by =
-  c("survey_id", "question_text_latest")) %>%
+  inner_join(
+    named_comments %>% select(resource_name, npi_num, survey_id, question_text_latest, response),
+    by = c("survey_id", "question_text_latest")
+  ) %>%
   arrange(resource_name, desc(total_sentiment)) %>%
   ungroup() %>%
   select(response)
 
+# Build a gt table with all positive comments for the current NPI:
+# 1) select response column only
+# 2) rename the column to a presentation-friendly label
+# 3) build a gt table
+# 4) left-align all columns
+# 5) style header background
+# 6) center the header text
 comments_all <- filter_npi %>%
-  select(response)%>%
+  select(response) %>%
   rename('All Positive Comments' = response) %>%
   gt() %>%
-  cols_align(align="left",columns = everything())%>%
-  tab_options(column_labels.background.color = 'dodgerblue4')%>%
-  tab_style(style=cell_text(align="center"),
-            locations = cells_column_labels(columns = everything())
-            )
+  cols_align(align = "left", columns = everything()) %>%
+  tab_options(column_labels.background.color = 'dodgerblue4') %>%
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_column_labels(columns = everything())
+  )
+``
 
 
 ```
