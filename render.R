@@ -118,11 +118,11 @@ names <- cardrun %>%
 rec_date <- format(unique(na.omit(subsetcomments$recdate)), "%Y%m%d") # e.g., 20251224
 
 # Define the folder and ensure it exists
-output_folder <- paste0(rec_date,"_tmp")
-
-if (!dir.exists(output_folder)) {
-  dir.create(output_folder, recursive = TRUE)
-}
+# output_folder <- paste0(rec_date,"_tmp")
+# 
+# if (!dir.exists(output_folder)) {
+#   dir.create(output_folder, recursive = TRUE)
+# }
 
 reports <-
   tibble(
@@ -141,12 +141,12 @@ pwalk(reports, quarto_render)
 
 # 2) Collect all per-NPI summaries
 
-files <- list.files(output_folder, pattern = "\\.csv$", full.names = TRUE)
+files <- list.files("tmp", pattern = "\\.csv$", full.names = TRUE)
 combined_df <- map_dfr(files, readr::read_csv)
 
 # 3) Print one combined GT table
 combined_table <- combined_df %>%
   arrange(provider_nm)
 
-write_csv(combined_table, file = file.path("summary_tables",paste0(rec_date,"_summarytable.csv")))
+write_csv(combined_table, file = (paste0(rec_date,"_summarytable.csv")))
 
