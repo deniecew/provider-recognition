@@ -204,7 +204,7 @@ summary_row <- tibble(
   }
 )
 
-write_csv(summary_row, file = file.path("summaries", paste0(params$npi, ".csv")))
+write_csv(summary_row, file = file.path("summaries", paste0(params$npi,"_",summary_row$rec_date, ".csv")))
 
 ```
 
@@ -227,7 +227,7 @@ write_csv(summary_row, file = file.path("summaries", paste0(params$npi, ".csv"))
 `r if (n == 0) {
       "No comment date available"
     } else {
-      paste0("Comment received ", unique(named_comments$recdate))
+      paste0("Comment received ", summary_row$rec_date)
     }`
 :::
 

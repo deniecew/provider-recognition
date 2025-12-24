@@ -25,6 +25,17 @@ commentdata <- commentdata %>%
 # Convert 'npi_num' column to character type (important if it contains leading zeros or non-numeric values)
   commentdata$npi_num<-as.character(commentdata$npi_num)
 
+  
+# Initialize the cumulative results data frame
+  providermatches <- data.frame(
+    program     = character(),
+    provider_nm = character(),
+    npi_num     = character(),
+    match_count = integer(),
+    emails_sent = integer(),
+    stringsAsFactors = FALSE
+  )
+  
 
 # Iterate over each unique NPI value in the dataset
   for (npi_val in unique(commentdata$npi_num)){
@@ -103,10 +114,13 @@ names <- cardrun %>%
 #  - the input template file
 #  - the output HTML filename based on provider name
 #  - the parameter list passed to the Quarto document for that NPI
+
+rec_date <- format(unique(commentdata$recdate, "%Y%m%d"))  # e.g., 20251224
+
 reports <-
   tibble(
     input = "cardtemplate.qmd",            # Quarto template to render
-    output_file = str_glue("{names}.html"),# Output filenames per provider
+    output_file = str_glue("{rec_date}_{names}.html"),# Output filenames per provider
     execute_params = map(                  # Parameter list per NPI value
       npi_nums,
       ~ list(npi = .)                      # Pass 'npi' parameter into the doc
@@ -126,4 +140,5 @@ combined_df <- map_dfr(files, readr::read_csv)
 combined_table <- combined_df %>%
   arrange(provider_nm)
 
-write_csv(combined_table, file = "summarytable.csv")
+write_csv(combined_table, file = file.path("summary_tables",paste0(rec_date,"_summarytable.csv")))
+
