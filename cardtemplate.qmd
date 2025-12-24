@@ -7,7 +7,7 @@ format:
     page-layout: full
 
 params:
-  npi : " "
+  npi : "1013790922"
 
 ---
 
@@ -203,8 +203,10 @@ summary_row <- tibble(
     } else NA_character_
   }
 )
+# 
+output<- paste0(summary_row$rec_date,"_tmp")
 
-write_csv(summary_row, file = file.path("summaries", paste0(params$npi,"_",summary_row$rec_date, ".csv")))
+write_csv(summary_row, file = file.path(output, paste0(params$npi,"_",summary_row$rec_date, ".csv")))
 
 ```
 

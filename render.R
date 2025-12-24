@@ -115,7 +115,14 @@ names <- cardrun %>%
 #  - the output HTML filename based on provider name
 #  - the parameter list passed to the Quarto document for that NPI
 
-rec_date <- format(unique(commentdata$recdate, "%Y%m%d"))  # e.g., 20251224
+rec_date <- format(unique(na.omit(subsetcomments$recdate)), "%Y%m%d") # e.g., 20251224
+
+# Define the folder and ensure it exists
+output_folder <- paste0(rec_date,"_tmp")
+
+if (!dir.exists(output_folder)) {
+  dir.create(output_folder, recursive = TRUE)
+}
 
 reports <-
   tibble(
@@ -133,7 +140,8 @@ reports <-
 pwalk(reports, quarto_render)
 
 # 2) Collect all per-NPI summaries
-files <- list.files("summaries", pattern = "\\.csv$", full.names = TRUE)
+
+files <- list.files(output_folder, pattern = "\\.csv$", full.names = TRUE)
 combined_df <- map_dfr(files, readr::read_csv)
 
 # 3) Print one combined GT table
