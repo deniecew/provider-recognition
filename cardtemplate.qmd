@@ -92,6 +92,10 @@ name_filter <- commentdata %>%
   mutate(fullname = paste(FirstName, LastName, sep = " ")) %>%
   distinct(fullname)
 
+program_filter <- providermatches %>%
+  filter(npi_num == params$npi) %>%
+  distinct(program)
+
 # Restrict the dataset to the current NPI as defined by the Quarto parameter
 filter_npi <- commentdata %>%
   filter(npi_num == params$npi)
@@ -185,7 +189,9 @@ first_or_na <- function(x) {
 
 summary_row <- tibble(
   npi_num = as.character(params$npi),
-
+ 
+  program = as.character(named_comments$program_nm[1]),
+  
   provider_nm = {
     if ("fullname" %in% names(name_filter)) first_or_na(name_filter$fullname) else NA_character_
   },
@@ -203,7 +209,7 @@ summary_row <- tibble(
     } else NA_character_
   }
 )
-# 
+
 
 
 write_csv(summary_row, file = file.path("tmp", paste0(params$npi,"_",summary_row$rec_date, ".csv")))
