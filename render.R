@@ -143,3 +143,4 @@ combined_table <- combined_df %>%
 
 write_csv(combined_table, file = ("summarytable.csv"))
 
+

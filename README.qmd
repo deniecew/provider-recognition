@@ -30,4 +30,61 @@ This is an automated process that sorts, filters, and distributes positive provi
 
 ------------------------------------------------------------------------
 
+Steps:
+
+1.  Download daily the source data from the semantic model using the file ![](images/clipboard-2583099336.png)and save this to the working folder as commentdata.csv
+
+    NOTE: It is essential to download only one day's worth of data.
+
 ![](images/clipboard-2647012276.png)
+
+2.  Open the provider-recognition.Rproj file. The README.qmd, cardtemplate.qmd and render.R tabs should automatically load into the project. If they do not load automatically then simply load them into the project manually by clicking on them in the file folder while the proect is still open.
+3.  Open the render.R tab, highlight all the code and click "Run". This will generate all shoutout cards as an html page as well as append the current run's list of shoutouts to the table in the summarytable.csv file.
+4.  Move the html files from the code folder to the main ShoutOut folder for provider access.
+5.  Send the links to the shoutout cards OR send a PDF version of the shoutout cards. DO NOT send the HTML page as an attachment.
+
+### **Steps to Generate ShoutOut Cards**
+
+1.  **Download Source Data**
+
+-   Download the daily source data from the semantic model.
+
+-   Save the file in the working folder as **`commentdata.csv`**.
+
+-   **Important:** Only download **one day’s worth of data**.
+
+2.  **Open the Project**
+
+-   Open **`provider-recognition.Rproj`**.
+
+-   The following files should automatically load:
+
+    -   `README.qmd`
+
+    -   `cardtemplate.qmd`
+
+    -   `render.R`
+
+-   If they do not load automatically, manually open them by clicking on each file in the project folder while the project is open.
+
+3.  **Run the Render Script**
+
+-   Open the **`render.R`** tab.
+
+-   Highlight all the code and click **Run**.
+
+-   This will:
+
+    -   Generate all ShoutOut cards as an **HTML page**.
+
+    -   Append the current run’s list of shoutouts to **`summarytable.csv`**.
+
+4.  **Move HTML Files**
+
+-   Move the generated HTML files from the **code** folder to the main **ShoutOut** folder for provider access.
+
+5.  **Share the Cards**
+
+-   Send **links** to the ShoutOut cards **OR** send a **PDF version** of the cards.
+
+-   **Do NOT** send the HTML page as an attachment.
