@@ -5,6 +5,7 @@ format:
     title-block: false
     toc: false
     page-layout: full
+    embed-resources: true
 
 params:
   npi : " "
