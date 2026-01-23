@@ -40,7 +40,7 @@ params:
 }
 
 .centered-text {
-  font-size: 1.75em;
+  font-size: 1.5em;
   font-weight: bold;
   font: Draft A;
   background-color: transparent;
