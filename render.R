@@ -130,6 +130,7 @@ reports <-
 # 1) Render all reports by walking each row of 'reports' into quarto_render()
 # pwalk passes the columns as named arguments matching quarto_render's signature
 # This produces one HTML report per provider with the corresponding NPI parameter
+
 pwalk(reports, quarto_render)
 
 # 2) Collect all per-NPI summaries
@@ -142,5 +143,4 @@ combined_table <- combined_df %>%
   arrange(provider_nm)
 
 write_csv(combined_table, file = ("summarytable.csv"))
-
 
