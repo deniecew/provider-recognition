@@ -34,13 +34,13 @@ This is an automated process that sorts, filters, and distributes positive provi
 
 1.  **Download Source Data**
 
--   Download the daily source data from the semantic model
+-   Download the daily source data from the semantic model (**Important:** Only download **one day’s worth of data**.)
 
-![](images/clipboard-2782250323.png)
+    ![](images/clipboard-3250938820.png)
 
--   Save the file in the working folder as **`commentdata.csv`**.![](images/clipboard-2647012276.png)
+<!-- -->
 
--   **Important:** Only download **one day’s worth of data**.
+-   Save the file in the working folder as **`commentdata.csv`**.
 
 2.  **Open the Project**
 
@@ -68,12 +68,10 @@ This is an automated process that sorts, filters, and distributes positive provi
 
     -   Append the current run’s list of shoutouts to **`summarytable.csv`**.
 
-4.  **Move HTML Files**
+4.  **Share the Cards**
 
--   Move the generated HTML files from the **code** folder to the main **ShoutOut** folder for provider access.
+-   Move the generated HTML files from the **code** folder to the main **ShoutOut** folder for provider access. (optional)
 
-5.  **Share the Cards**
+<!-- -->
 
--   Send **links** to the ShoutOut cards **OR** send a **PDF version** of the cards.
-
--   **Do NOT** send the HTML page as an attachment.
+-   Send the ShoutOut cards at HTML attachment.

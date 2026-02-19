@@ -77,6 +77,8 @@ library(dplyr)     # Explicitly load dplyr for data manipulation verbs
 library(gt)        # Build presentation-quality tables
 library(tinytex)   # LaTeX utilities for rendering PDFs via Quarto if needed
 library(tibble)
+library(stringr)
+library(purrr)
 
 # Load pre-saved data objects from RData files into the environment
 load("providermatches.Rdata")
@@ -87,11 +89,32 @@ load("commentdata.Rdata")
 # 2) split Provider Name "Last, First" into two columns
 # 3) create "First Last" for reporting
 # 4) keep distinct values to avoid duplicates
+
+# name_filter <- commentdata %>%
+#   filter(npi_num == params$npi) %>%
+#   separate(provider_nm, into = c("LastName", "FirstName"), sep = ", ") %>%
+#   mutate(fullname = paste(FirstName, LastName, sep = " ")) %>%
+#   distinct(fullname)
+
+
+
 name_filter <- commentdata %>%
   filter(npi_num == params$npi) %>%
-  separate(provider_nm, into = c("LastName", "FirstName"), sep = ", ") %>%
-  mutate(fullname = paste(FirstName, LastName, sep = " ")) %>%
-  distinct(fullname)
+  # Split by comma to a list-column, trim spaces, drop empties
+  mutate(parts = str_split(provider_nm, ",")) %>%
+  mutate(parts = map(parts, ~ .x %>% str_trim() %>% discard(~ .x == ""))) %>%
+  # Build fullname = First + Last + optional credentials joined by ", "
+  mutate(fullname = map_chr(parts, function(x) {
+    n <- length(x)
+    if (n == 0) return("")
+    if (n == 1) return(x[1])
+    last <- x[1]
+    first <- x[n]
+    creds <- if (n > 2) x[2:(n - 1)] else character(0)
+    paste0(first, " ", last, if (length(creds)) paste0(" ", paste(creds, collapse = ", ")) else "")
+  })) %>%
+  distinct(fullname) %>%
+  select(fullname)
 
 program_filter <- providermatches %>%
   filter(npi_num == params$npi) %>%
